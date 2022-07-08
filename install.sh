@@ -109,8 +109,8 @@ function nginx_in(){
     [ -d ${file_path} ] || mkdir -p ${file_path}
     file_server="/usr/local/bin/file_server"
     pkill file_server  
-    wget -O ${file_server} -c https://github.com/munderline/nginx_file_server/raw/main/server && chmod +x ${file_server}
-    wget -O /etc/nginx/conf.d/down_up.conf -c https://raw.githubusercontent.com/munderline/nginx_file_server/main/down_up.conf
+    wget -O ${file_server} -c https://github.com/munderline/nginx_sftp_ftp_server/raw/main/server && chmod +x ${file_server}
+    wget -O /etc/nginx/conf.d/down_up.conf -c https://raw.githubusercontent.com/munderline/nginx_sftp_ftp_server/main/down_up.conf
     /usr/bin/setsid ${file_server} >/dev/null 2>&1 &
     nginx -s reload > /dev/null 2>&1 || nginx
     echo -e "\033[5;32m===============nginx start=================\033[0m"
