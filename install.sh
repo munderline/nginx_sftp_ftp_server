@@ -4,10 +4,6 @@ U=${1:-sysadmin}
 P=${2:-sysadmin}
 sftpath="/data/sftp/${U}"
 [ -e ${sftpath} ] || mkdir -p ${sftpath}
-file_path="/data/www/download/"
-[ -d ${file_path} ] || mkdir -p ${file_path}
-dd if=/dev/zero of=${file_path}/default.txt bs=1M count=1
-tmp_file=${file_path}/default.txt
 
 function sftp_in(){
     echo "sftp install..."
@@ -31,7 +27,7 @@ function sftp_in(){
     [ -e ${sftpath_upload} ] || mkdir -p ${sftpath_upload}
     chown ${U}:sftp ${sftpath_upload}
     chmod 755 ${sftpath_upload}
-    ln -sf ${tmp_file} ${sftpath_upload}
+    dd if=/dev/zero of=${sftpath_upload}/default.txt bs=1M count=1
     # start...
     systemctl restart sshd && echo -e "\033[5;32m===============sftp start=================\033[0m"
 }
@@ -88,7 +84,7 @@ function ftp_in(){
     echo -e ${U}"\n"${P} > /etc/vsftpd/virtusers
     db_load -T -t hash -f /etc/vsftpd/virtusers /etc/vsftpd/virtusers.db
     mkdir -p /var/ftp/virtual/${U} && chmod 777 -R /var/ftp/virtual/${U}
-    ln -sf ${tmp_file} /var/ftp/virtual/${U}
+    dd if=/dev/zero of=/var/ftp/virtual/${U}/default.txt bs=1M count=1
 
     echo "local_root=/var/ftp/virtual/${U}
     allow_writeable_chroot=YES
@@ -113,6 +109,7 @@ function nginx_in(){
     sed -i 's/80/18888/g' /etc/nginx/nginx.conf
     file_path="/data/www/download/"
     [ -d ${file_path} ] || mkdir -p ${file_path}
+    dd if=/dev/zero of=${file_path}default.txt bs=1M count=1
     file_server="/usr/local/bin/file_server"
     pkill file_server  
     wget -O ${file_server} -c https://github.com/munderline/nginx_sftp_ftp_server/raw/main/server && chmod +x ${file_server}
